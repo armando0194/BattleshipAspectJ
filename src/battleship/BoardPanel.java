@@ -4,9 +4,15 @@ package battleship;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 
 import battleship.model.Board;
 import battleship.model.Place;
@@ -77,6 +83,14 @@ public class BoardPanel extends JPanel {
     	this(battleBoard, 
     	    DEFAULT_TOP_MARGIN, DEFAULT_LEFT_MARGIN, DEFAULT_PLACE_SIZE,
     	    DEFAULT_BOARD_COLOR, DEFAULT_HIT_COLOR, DEFAULT_MISS_COLOR);
+    	
+    	//Adds a action and input map, so the panel detects when a user hits F5 
+    	ActionMap actionMap = getActionMap();
+        int condition = JComponent.WHEN_IN_FOCUSED_WINDOW;
+        InputMap inputMap = getInputMap(condition);
+        String cheat = "Cheat";
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0), cheat);
+        actionMap.put(cheat, new battleship.AddCheatKey.KeyAction(this, cheat));
     }
     
     /** Create a new panel to display the given battleship board according
@@ -195,6 +209,9 @@ public class BoardPanel extends JPanel {
     		}
         }
         g.setColor(oldColor);
+        
     }
+    
+
 
 }

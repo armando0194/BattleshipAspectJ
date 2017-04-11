@@ -26,7 +26,7 @@ import battleship.BoardPanel;
 public class BattleshipDialog extends JDialog {
 
     /** Default dimension of the dialog. */
-    private final static Dimension DEFAULT_DIMENSION = new Dimension(335, 440);
+    private final static Dimension DEFAULT_DIMENSION = new Dimension(335, 550);
 
     /** To place ships randomly. */
     private final static Random random = new Random();
