@@ -10,7 +10,7 @@ import battleship.model.Ship;
 
 public aspect AddSound {
 	/** Directory where audio files are stored. */
-    private static final String SOUND_DIR = "C:\\Users\\Sebastián\\Downloads\\";
+    private static final String SOUND_DIR = "src\\sounds\\";
 	
 	pointcut playHitSound() : execution(void notifyHit(Place, int));
 	pointcut playSunkSound() : execution(void notifyShipSunk(Ship));
