@@ -20,7 +20,7 @@ public aspect AddSound {
 		playAudio("bomb_x.wav");
 	}
 	after(): playSunkSound(){
-		System.out.println("buenos dias");
+		System.out.println("Buenos dias");
 		playAudio("missile.wav");
 	}
 
