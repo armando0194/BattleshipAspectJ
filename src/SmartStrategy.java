@@ -37,7 +37,6 @@ public class SmartStrategy extends Strategy {
 		//otherwise, generate random value and check if a ship was hit
 			moveIndex = possibleMoveKeys.get(firstElement);
 			removePlaceByIndex(firstElement);
-			
 		}
 		
 		move = possibleMoves.get(moveIndex);
@@ -45,35 +44,26 @@ public class SmartStrategy extends Strategy {
 		
 		if(move.isHitShip()){
 			isShipFound = true;
-			generatePotentialShipLocations(move, moveIndex);
+			generatePotentialShipLocations(move, moveIndex);	
 		}
 	}
 
 	private void generatePotentialShipLocations(Place move, int cell) {
-		
-		// if the cell to the left exists or hasnt been hit, add it to potential move
-		if( move.getY() > 1  && !possibleMoves.get(cell-1).isHit() ) {
+		// if the cell above exists and hasn't been hit, add it to potential move
+		if( move.getY() > 1  && !possibleMoves.get(cell-1).isHit()) 
 			potentialShipLocations.push(cell-1);
-			//parent::removeShot($cell-1);
-		}
 		
-		// if the cell to the right exists or hasnt been hit, add it to potential move
-		if( move.getY() < 10 && !possibleMoves.get(cell + 1).isHit() ) {
+		// if the cell below exists and hasn't been hit, add it to potential move
+		if( move.getY() < 10 && !possibleMoves.get(cell + 1).isHit()) 
 			potentialShipLocations.push(cell+1);
-			//parent::removeShot($cell+1);
-		}
 		
-		// if the cell above exists or hasnt been hit, add it to potential move
-		if( move.getX() > 1 && !possibleMoves.get(cell-10).isHit() ) {
+		// if the cell to the left exists and hasn't been hit, add it to potential move
+		if( move.getX() > 1 && !possibleMoves.get(cell-10).isHit()) 
 			potentialShipLocations.push(cell-10);
-			//parent::removeShot($cell-10);
-		}
 		
-		// if the cell below exists or hasnt been hit, add it to potential move
-		if( move.getX() < 10  && !possibleMoves.get(cell+10).isHit() ) {
-			potentialShipLocations.push(cell + 10);
-			//parent::removeShot($cell+10);
-		}		
+		// if the cell to the right exists  and hasn't been hit, add it to potential move
+		if( move.getX() < 10  && !possibleMoves.get(cell+10).isHit()) 
+			potentialShipLocations.push(cell + 10);	
 	}
 
 	/**
@@ -91,11 +81,22 @@ public class SmartStrategy extends Strategy {
 	 */
 	@Override
 	protected void generatePossibleMoveKeys() {
-		possibleMoveKeys = IntStream.iterate(2, i -> (i % 10 == 0)? i + 1 : (i % 10 == 9) ? i + 3 : i + 2)
-							.limit(50)
-							.boxed()
-							.collect(Collectors.toList());  
+		possibleMoveKeys = IntStream.iterate(2, i -> isMoveValid(i) )
+				.limit(50)
+				.boxed()
+				.collect(Collectors.toList());
 		Collections.shuffle(possibleMoveKeys);
+	}
+	
+	protected int isMoveValid(int i){
+		if(i % 10 == 0) 
+			i+= 1;
+		else if(i % 10 == 9)
+			i+= 3;
+		else
+			i+= 2;
+		
+		return i;
 	}
 
 }

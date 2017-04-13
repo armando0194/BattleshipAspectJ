@@ -3,72 +3,50 @@ package battleship;
 import javax.swing.JPanel;
 import java.awt.Color;
 import java.awt.Graphics;
-
-import battleship.model.Board;
 import battleship.model.Place;
 import battleship.model.Ship;
 
-import static battleship.Constants.*;
-
 /**
-* A special panel to display a battleship board modeled by the
-* {@link Board} class. A battle board is displayed as a 2D grid of 
+* A special panel to display a ship modeled by the
+* {@link Ship} class. A ship status is displayed as a 2D grid of 
 * square cells. 
-* 
-* <pre>
-*  +--------------
-*  |    TM         
-*  |   +---+---+-- 
-*  |LM |PS |   |   ...
-*  |   +---+---+--
-*  |       ...
-* </pre>
-*
-* @see Board
-* @author Yoonsik Cheon
-* @version $Revision: 1.1 $
+* @see Ship
 */
 @SuppressWarnings("serial")
 public class ShipPanel extends JPanel {
 
- /**
-	  * Height of the blank space above the board panel in pixel. It is 10 by
-	  * default.
+	 /**
+	  * Height of the blank space above the ship panel in pixel.
 	  */
-	 protected final int topMargin;
+	 protected final int topMargin = 0;
 	
 	 /**
-	  * Width of the blank space left of the board panel in pixel. It is 10 by
-	  * default.
+	  * Width of the blank space left of the ship panel in pixel.
 	  */
-	 protected final int leftMargin;
+	 protected final int leftMargin = 0;
 	
 	 /**
-	  * Number of pixels between horizontal/vertical lines of the board panel to
-	  * present places. By default, it is 30.
+	  * Number of pixels between horizontal/vertical lines of the ship panel to
+	  * present places..
 	  */
-	 protected int placeSize;
-	
-	 /**
-	  * Number of rows/columns of the battleship board. The board will have
-	  * <code>boardSize x boardSize</code> places.
-	  */
-	 protected int boardSize;
+	 protected final int placeSize = 10;
 	 
+	 /**
+	  * Number of columns of the ship
+	  */
 	 protected int shipSize;
 	
-	 /** Background color of the board. It's blue by default. */
-	 protected Color boardColor;
+	 /** Background color of the ship.  */
+	 protected final Color shipColor = new Color(51, 153, 255);
+	 
+	 /** Color for drawing ship places that are hit. */
+	 protected final Color hitShipColor = Color.ORANGE;
 	
-	 protected Color shipColor;
-	 /** Color for drawing places that are hit and have a ship. */
-	 protected final Color hitColor;
-	
-	 /** Color for drawing places that are hit but have no ship. */
-	 protected final Color missColor;
+	 /** Color for drawing ship places that are sunk */
+	 protected final Color sunkShipColor = Color.RED;
 	
 	 /** Foreground color for drawing 2-d grid lines for board and places. */
-	 protected final Color lineColor = DEFAULT_LINE_COLOR;
+	 protected final Color lineColor = Color.BLACK;
 	
 	 /** Battleship board to be displayed by this panel. */
 	 //protected final Board board;
@@ -77,24 +55,8 @@ public class ShipPanel extends JPanel {
 	
 	 /** Create a new panel to display the given battleship board. */ 
 	 public ShipPanel(Ship ship) {
-	 	this(ship, 
-	 	    0, 0, 10,
-	 	    DEFAULT_BOARD_COLOR, DEFAULT_HIT_COLOR, DEFAULT_MISS_COLOR);
-	 }
-	 
-	 /** Create a new panel to display the given battleship board according
-	  * to the given display specifications. */
-	 public ShipPanel(Ship ship,
-	         		int topMargin, int leftMargin, int placeSize,
-	         		Color boardColor, Color hitColor, Color missColor) {
-	 	this.ship = ship;
-	 	this.shipSize = ship.size();
-	 	this.topMargin = topMargin;
-	 	this.leftMargin = leftMargin;
-	 	this.placeSize = placeSize;
-	 	this.boardColor = boardColor;
-	 	this.hitColor = hitColor;
-	 	this.missColor = missColor;
+		 this.ship = ship;
+		 this.shipSize = ship.size();
 	 }
 	 
 	 /** Overridden here to draw the current state of the battleship board. 
@@ -115,7 +77,7 @@ public class ShipPanel extends JPanel {
 	     // fill the background of the frame.
 	     final int frameSize = shipSize * placeSize;
 	     System.out.println(frameSize);
-	     g.setColor(boardColor);
+	     g.setColor(shipColor);
 	     g.fillRect(leftMargin, topMargin, frameSize, placeSize);
 	     
 	     // draw vertical and horizontal lines
@@ -133,15 +95,17 @@ public class ShipPanel extends JPanel {
 	     g.setColor(oldColor);
 	 }
 	
-	 /** Draw the places that are hit. */
+	 /** Draws the ship places yellow if they are hit, and red if the ship is sunk. */
 	 private void drawPlaces(Graphics g) {
 	     final Color oldColor = g.getColor();
+	     int x = leftMargin + 1;
+		 int y = topMargin + 1;
+		 
 	     for (Place p: ship.places()) {
 	 		if (p.isHit()) {
-	 		    int x = leftMargin + (p.getX() - 1) * placeSize;
-	 		    int y = topMargin + (p.getY() - 1) * placeSize;
-	 		    g.setColor(ship.isSunk() ? missColor : hitColor);
-	 		    g.fillRect(x + 1, y + 1, placeSize - 1, placeSize - 1);
+	 		    g.setColor(ship.isSunk() ? sunkShipColor : hitShipColor);
+	 		    g.fillRect(x, y, (placeSize - 1), (placeSize - 1));
+	 		    x += placeSize;
 	 		}
 	     }
 	     g.setColor(oldColor);

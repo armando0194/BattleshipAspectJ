@@ -6,35 +6,64 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import battleship.model.Place;
-import battleship.model.Ship;
+import battleship.model.Board;
 
 public aspect AddSound {
 	/** Directory where audio files are stored. */
     private static final String SOUND_DIR = "src\\sounds\\";
 	
-	pointcut playHitSound() : execution(void notifyHit(Place, int));
-	pointcut playSunkSound() : execution(void notifyShipSunk(Ship));
+    /** Clip that will be played whenever a place is hit */
+    private Clip hitSound = null;
+    
+    /** Clip that will be played whenever a ship is hit */
+	private Clip sunkSound = null;
 	
-	after(): playHitSound(){
-		System.out.println("buenas noches");
-		playAudio("bomb_x.wav");
+	/** Flag that helps determine if the clips are loaded before playing it*/
+    private boolean soundsLoaded = false;
+    
+	pointcut playSound(Place place) : 
+		execution(void Board.hit(Place)) 
+		&& args(place);
+	
+	/**
+	 * Runs after the hit method in Board and plays a clip
+	 * @param place
+	 */
+	after(Place place): playSound(place){
+		
+		/** if the sounds are not loaded, load the hit and sunk clips*/
+		if(!soundsLoaded){
+			hitSound = loadAudio("Missile.wav");
+			sunkSound = loadAudio("bomb_x.wav");
+		}
+		
+		if(place.hasShip() && place.ship().isSunk()){
+		/** if the ship was sunk, play sunk clip */
+			sunkSound.setFramePosition(0);
+			sunkSound.start();
+		}
+		else if(place.isHit()){
+		/** if the place was hit, play hit clip */
+			hitSound.setFramePosition(0);
+			hitSound.start();
+		}
 	}
-	after(): playSunkSound(){
-		System.out.println("Buenos dias");
-		playAudio("missile.wav");
-	}
-
-    /** Play the given audio file. Inefficient because a file will be 
-     * (re)loaded each time it is played. */
-    public void playAudio(String filename) {
+	
+    /**
+     * Loads a clip from the system
+     * @param filename - wav filename
+     * @return - An open clip ready to play
+     */
+    public Clip loadAudio(String filename) {
       try {
     	  AudioInputStream audioIn = AudioSystem.getAudioInputStream(new File(SOUND_DIR + filename));
           Clip clip = AudioSystem.getClip();
           clip.open(audioIn);
-          clip.start();
+          return clip;
       } catch (UnsupportedAudioFileException 
             | IOException | LineUnavailableException e) {
           e.printStackTrace();
+          return null;
       }
     }
 }

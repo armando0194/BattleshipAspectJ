@@ -11,15 +11,17 @@ import battleship.model.Place;
 
 
 public privileged aspect AddCheatKey {
+	private static final String IMAGE_DIR = "src\\sprite\\block.png";
 	private static BufferedImage image = null;
 	public boolean BoardPanel.isCheatMode = false;
 	
 	private void BoardPanel.drawShips(Graphics g){
 		if(image == null){
 			try{
-				image = ImageIO.read(new File("C:\\Users\\arman\\Documents\\JavaProjects\\BattleshipAspectJ\\src\\sprite\\block.png"));
+				image = ImageIO.read(new File(IMAGE_DIR));
 			} catch(Exception ex){
-				System.out.println( "Exception: " + ex.getStackTrace() );
+				ex.printStackTrace();
+				return; 
 			}
 		}
 
@@ -28,7 +30,6 @@ public privileged aspect AddCheatKey {
 			    int x = leftMargin + (p.getX() - 1) * placeSize;
 			    int y = topMargin + (p.getY() - 1) * placeSize;
 			    g.drawImage(image, x+1, y+1, this);
-		
 			}
 		}
 	}

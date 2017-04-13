@@ -1,13 +1,16 @@
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseListener;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import java.awt.event.ActionEvent;
 
 import battleship.*;
 import static battleship.Constants.DEFAULT_BOARD_COLOR;
@@ -15,16 +18,34 @@ import static battleship.Constants.DEFAULT_HIT_COLOR;
 import static battleship.Constants.DEFAULT_MISS_COLOR;
 import battleship.model.*;
 
-public privileged aspect AddStrategy {
+ privileged aspect AddStrategy {
 	
-	public JButton newPlayButton;
+	public JButton BattleshipDialog.newPlayButton;
 	public Board computerBoard;
     public Board userBoard;
-    private Strategy computerStrategy;
-	private StrategyDropDown dropDown;
-	private JPanel test;
+    public Strategy computerStrategy;
+	public StrategyDropDown BattleshipDialog.dropDown;
+	public List<ShipPanel> shipStatusPanels;
+	public JPanel test;
 	
-	pointcut computerTurn(): call(void Place.hit());
+	/**  */
+	pointcut computerTurn(): 
+		call(void Place.hit());
+	
+	/**  */
+	pointcut resetComputerBoard(BattleshipDialog dialog, ActionEvent event) : 
+		execution(void BattleshipDialog.playButtonClicked(ActionEvent)) 
+		&& target(dialog)
+		&& args(event);
+	
+	after(BattleshipDialog dialog, ActionEvent event): resetComputerBoard(dialog, event){
+		String strategySelected = dialog.getStrategySelected();
+		System.out.println("new game: " + strategySelected);
+	}
+	
+	public String BattleshipDialog.getStrategySelected(){
+    	return dropDown.getStrategySelected();
+    }
 	
 	after(): computerTurn(){
 		System.out.println("hit");
@@ -34,14 +55,15 @@ public privileged aspect AddStrategy {
         	test.repaint();
         }
         System.out.println("Call from " +  sourceName);
-		//computerStrategy.move();
 	}
 	
-	JPanel around(battleship.BattleshipDialog dialog): target(dialog) && execution(JPanel makeBoardPane()){
+	JPanel around(battleship.BattleshipDialog dialog): 
+		target(dialog) 
+		&& execution(JPanel makeBoardPane()){
 		JPanel content = new JPanel(new BorderLayout());
 		content.add(makeStatusPanel(dialog), BorderLayout.NORTH);
 		content.add(proceed(dialog), BorderLayout.CENTER);
-		addNewPlayButton(dialog);
+		dialog.addNewPlayButton();
 		return content;
 	}
 	
@@ -54,8 +76,10 @@ public privileged aspect AddStrategy {
     	Iterable<Ship> ships = userBoard.ships();
     	
     	for (Ship ship : ships) {
+    		ShipPanel shipPanel = new ShipPanel(ship);
     		shipsPanel.add( new JLabel(ship.name()) );
-    		shipsPanel.add( new ShipPanel(ship) );
+    		shipsPanel.add( shipPanel );
+    		//shipStatusPanels.add(shipPanel);
 		}
     	
     	return shipsPanel;
@@ -95,16 +119,16 @@ public privileged aspect AddStrategy {
         }
     }
     
-    public void addNewPlayButton(battleship.BattleshipDialog dialog){
-    	JButton practiceButton = (JButton)dialog.playButton;
-    	JPanel buttonPane = (JPanel)practiceButton.getParent();
+    public void BattleshipDialog.addNewPlayButton(){
+    	JButton practiceButton = (JButton)playButton;
+    	JPanel buttonPane = (JPanel)playButton.getParent();
     	dropDown = new StrategyDropDown();
     	practiceButton.setText("Practice"); // change the text of the current play button to practiv
     	
     	//create new play button
     	newPlayButton = new JButton("Play");
-    	newPlayButton.addActionListener(this::playButtonClicked2);
-    	
+    	//newPlayButton.addActionListener(new PlayButtonListener(this, dialog, dropDown, computerStrategy, userBoard));
+    	newPlayButton.addActionListener(this::playButtonClicked);
     	// add new button and strategy dropdown
     	buttonPane.add(newPlayButton);
     	buttonPane.add(new JLabel("Strategy: "));
@@ -115,17 +139,17 @@ public privileged aspect AddStrategy {
 	/** To be called when the play button is clicked. If the current play
      * is over, start a new play; otherwise, prompt the user for
      * confirmation and then proceed accordingly. */
-	private void playButtonClicked2(ActionEvent event) {
-        System.out.println("Play " + dropDown.getStrategySelected());
-        String strategySelected = dropDown.getStrategySelected();
-        
-        if(strategySelected.equals("Smart")){
-        	computerStrategy = new SmartStrategy(userBoard.places());
-        }else if(strategySelected.equals("Sweep")){
-        	computerStrategy = new SweepStrategy(userBoard.places());
-        }else if(strategySelected.equals("Random")){
-        	computerStrategy = new RandomStrategy(userBoard.places());
-        }
-        
-    }
+//	private void playButtonClicked2(ActionEvent event) {
+//        System.out.println("Play " + dropDown.getStrategySelected());
+//        String strategySelected = dropDown.getStrategySelected();
+//        
+//        if(strategySelected.equals("Smart")){
+//        	computerStrategy = new SmartStrategy(userBoard.places());
+//        }else if(strategySelected.equals("Sweep")){
+//        	computerStrategy = new SweepStrategy(userBoard.places());
+//        }else if(strategySelected.equals("Random")){
+//        	computerStrategy = new RandomStrategy(userBoard.places());
+//        }
+//        
+//    }
 }
