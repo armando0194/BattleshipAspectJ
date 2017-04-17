@@ -21,6 +21,10 @@ public aspect AddSound {
 	/** Flag that helps determine if the clips are loaded before playing it*/
     private boolean soundsLoaded = false;
     
+    /**
+     * Pointcut that is executed, when the hit method on Board is executed.
+     * @param place
+     */
 	pointcut playSound(Place place) : 
 		execution(void Board.hit(Place)) 
 		&& args(place);
@@ -35,6 +39,7 @@ public aspect AddSound {
 		if(!soundsLoaded){
 			hitSound = loadAudio("Missile.wav");
 			sunkSound = loadAudio("bomb_x.wav");
+			soundsLoaded = true;
 		}
 		
 		if(place.hasShip() && place.ship().isSunk()){
@@ -51,7 +56,7 @@ public aspect AddSound {
 	
     /**
      * Loads a clip from the system
-     * @param filename - wav filename
+     * @param filename - audio filename
      * @return - An open clip ready to play
      */
     public Clip loadAudio(String filename) {

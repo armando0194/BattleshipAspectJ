@@ -1,16 +1,18 @@
+package battleship.strategy;
 import java.util.HashMap;
 import java.util.List;
 import battleship.model.Place;
 
-abstract class Strategy
+public abstract class Strategy
 {
 	public final int firstElement = 0;
 	public HashMap<Integer, Place> possibleMoves; 
 	public List<Integer> possibleMoveKeys;
 	
-	abstract protected void move();	
+	abstract protected void move();
 	abstract protected void generatePossibleMoveKeys();
 	
+	public Strategy(){}
 	public Strategy(Iterable<Place> places) {
 		generatePossibleMoves(places);
 	}

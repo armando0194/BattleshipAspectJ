@@ -83,14 +83,6 @@ public class BoardPanel extends JPanel {
     	this(battleBoard, 
     	    DEFAULT_TOP_MARGIN, DEFAULT_LEFT_MARGIN, DEFAULT_PLACE_SIZE,
     	    DEFAULT_BOARD_COLOR, DEFAULT_HIT_COLOR, DEFAULT_MISS_COLOR);
-    	
-    	//Adds a action and input map, so the panel detects when a user hits F5 
-    	ActionMap actionMap = getActionMap();
-        int condition = JComponent.WHEN_IN_FOCUSED_WINDOW;
-        InputMap inputMap = getInputMap(condition);
-        String cheat = "Cheat";
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0), cheat);
-        actionMap.put(cheat, new battleship.AddCheatKey.KeyAction(this, cheat));
     }
     
     /** Create a new panel to display the given battleship board according
