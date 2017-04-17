@@ -26,6 +26,12 @@ import battleship.strategy.SmartStrategy;
 
  privileged aspect AddStrategy {
 	
+	 /** Dialog dimensions when the practice mode is enabled */
+	private final static Dimension PRACTICE_DIMENSION = new Dimension(355, 470);
+		
+	/**  Dialog dimensions when the practice mode is disabled */
+	private final static Dimension PLAY_DIMENSION = new Dimension(350, 560);
+		
 	/** New play button that starts a new game with a computer  */
 	public JButton BattleshipDialog.newPlayButton;
 	
@@ -45,20 +51,28 @@ import battleship.strategy.SmartStrategy;
 	public boolean isPracticeMode = true;
 	
 	/**
-	 * Pointcut that executes when the placeClicked in BoardPanel is called
+	 * Poincut that executes when a new BattleshipDialog is initialized
+	 * @param dialog - dialog that will be modified
+	 */
+	pointcut setPracticeDimension(BattleshipDialog dialog) : 
+		execution(BattleshipDialog.new(..)) && 
+		target(dialog) ;
+		
+	/**
+	 * Pointcut that executes when the placeClicked method in BoardPanel is called
 	 * @param place - Place that the user clicked
 	 */
 	pointcut isGameOver(Place place): 
 		call(void BoardPanel.placeClicked(Place)) &&
 		args(place);
 	
-	/** Pointcut that executes when the hit in Place is called */
+	/** Pointcut that executes when the hit method in Place is called */
 	pointcut computerTurn(): 
 		call(void Place.hit()) &&
 		this(BoardPanel);
 	
 	/**
-	 * Pointcut that executes when the playButtonClicked in BattleshipDialog is executed
+	 * Pointcut that executes when the playButtonClicked method in BattleshipDialog is executed
 	 * @param dialog - current target
 	 * @param event - button pressed event
 	 */
@@ -74,6 +88,14 @@ import battleship.strategy.SmartStrategy;
 	pointcut makeStatusPane(battleship.BattleshipDialog dialog) : 
 		execution(JPanel makeBoardPane()) && 
 		target(dialog); 
+	
+	/**
+	 * When a dialog is created, the size is set to a predetermined size
+	 * @param dialog
+	 */
+	after (BattleshipDialog dialog) : setPracticeDimension(dialog){
+		dialog.setSize(PRACTICE_DIMENSION);
+	}
 	
 	/**
 	 * Check if the computer won before shooting a place
@@ -105,10 +127,14 @@ import battleship.strategy.SmartStrategy;
 				computerStrategy = new SweepStrategy(userBoard.places());
 			else if(strategySelected.equals("Smart"))
 				computerStrategy = new SmartStrategy(userBoard.places());	
+			statusPanel.setVisible(true);
+			dialog.setSize(PLAY_DIMENSION);
 		}
 		else{
 		// Otherwise the practice button was clicked, so set flag true
 			isPracticeMode = true;
+			statusPanel.setVisible(false);
+			dialog.setSize(PRACTICE_DIMENSION);
 		}
 	}
 	
@@ -176,6 +202,7 @@ import battleship.strategy.SmartStrategy;
     	userBoardPanel.getMouseListeners();
     	statusPanel.add(userBoardPanel);
     	this.statusPanel = statusPanel;
+    	statusPanel.setVisible(false);
     	return statusPanel;
     }
 
@@ -217,7 +244,7 @@ import battleship.strategy.SmartStrategy;
     }
     
     /**
-     * Creates a new play button and a startegy selector, and it adds it to JPanel
+     * Creates a new play button and a strategy selector, and it adds it to JPanel
      */
     public void BattleshipDialog.addNewPlayButton(){
     	JButton practiceButton = (JButton)playButton;
