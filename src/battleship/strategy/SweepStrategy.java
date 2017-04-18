@@ -5,6 +5,10 @@ import java.util.stream.IntStream;
 
 import battleship.model.Place;
 
+/**
+ * @author Manuel Hernandez
+ * @author Sebastian Perez
+ */
 public class SweepStrategy extends Strategy{
 
 	/**

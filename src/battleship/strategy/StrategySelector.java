@@ -2,6 +2,10 @@ package battleship.strategy;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 
+/**
+ * @author Manuel Hernandez
+ * @author Sebastian Perez
+ */
 @SuppressWarnings("serial")
 public class StrategySelector extends JComboBox<String[]>{
 	private final String[] choices = {"Random", "Sweep", "Smart"};

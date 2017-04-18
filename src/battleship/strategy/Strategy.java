@@ -3,6 +3,10 @@ import java.util.HashMap;
 import java.util.List;
 import battleship.model.Place;
 
+/**
+ * @author Manuel Hernandez
+ * @author Sebastian Perez
+ */
 public abstract class Strategy
 {
 	public final int firstElement = 0;

@@ -1,3 +1,4 @@
+package battleship.aspect;
 
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
@@ -16,7 +17,10 @@ import com.sun.glass.events.KeyEvent;
 import battleship.BoardPanel;
 import battleship.model.Place;
 
-
+/**
+ * @author Manuel Hernandez
+ * @author Sebastian Perez
+ */
 public privileged aspect AddCheatKey {
 	
 	/** Path of the image that shows the locations of ships hiding in the battleship board   */

@@ -7,6 +7,10 @@ import java.util.stream.IntStream;
 
 import battleship.model.Place;
 
+/**
+ * @author Manuel Hernandez
+ * @author Sebastian Perez
+ */
 public class SmartStrategy extends Strategy {
 
 	/** Stack that save potential ship locations when a ship is hit */

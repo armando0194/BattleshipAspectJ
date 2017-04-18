@@ -1,3 +1,4 @@
+package battleship.aspect;
 import java.io.File;
 import java.io.IOException;
 import javax.sound.sampled.AudioInputStream;
@@ -7,51 +8,60 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import battleship.model.Place;
 import battleship.model.Board;
+import battleship.model.Ship;
 
+ /**
+ * @author Manuel Hernandez
+ * @author Sebastian Perez
+ */
 public aspect AddSound {
 	/** Directory where audio files are stored. */
     private static final String SOUND_DIR = "src\\sounds\\";
 	
     /** Clip that will be played whenever a place is hit */
-    private Clip hitSound = null;
+    private final Clip hitSound = null;
     
     /** Clip that will be played whenever a ship is hit */
-	private Clip sunkSound = null;
-	
-	/** Flag that helps determine if the clips are loaded before playing it*/
-    private boolean soundsLoaded = false;
-    
-    /**
-     * Pointcut that is executed, when the hit method on Board is executed.
-     * @param place
-     */
-	pointcut playSound(Place place) : 
-		execution(void Board.hit(Place)) 
-		&& args(place);
+	private final Clip sunkSound = null;
 	
 	/**
-	 * Runs after the hit method in Board and plays a clip
-	 * @param place
+     * Pointcut that is executed, when the notifyHit method in Board is executed.
+     */
+	pointcut playHitSound() : 
+		execution(void Board.notifyHit(Place, int));
+	
+	/**
+     * Pointcut that is executed, when the notifyShipSunk method in Board is executed.
+     */
+	pointcut playSunkSound() : 
+		execution(void Board.notifyShipSunk(Ship));
+	
+	/**
+	 * Plays hit sound
 	 */
-	after(Place place): playSound(place){
-		
-		/** if the sounds are not loaded, load the hit and sunk clips*/
-		if(!soundsLoaded){
-			hitSound = loadAudio("Missile.wav");
-			sunkSound = loadAudio("bomb_x.wav");
-			soundsLoaded = true;
+	after() : playHitSound(){
+		playSound(hitSound, "Hit.wav");	
+	}
+	
+	/**
+	 * Plays sunk sound
+	 */
+	after() : playSunkSound(){
+		playSound(sunkSound, "Sunk.wav");	
+	}
+	
+	/**
+	 * Loads a clip if it is null and plays it
+	 * @param sound - sound clip
+	 * @param filename - name of the wav file
+	 */
+	private void playSound(Clip sound, String filename){
+		if(sound == null){
+			sound = loadAudio(filename);
 		}
-		
-		if(place.hasShip() && place.ship().isSunk()){
-		/** if the ship was sunk, play sunk clip */
-			sunkSound.setFramePosition(0);
-			sunkSound.start();
-		}
-		else if(place.isHit()){
-		/** if the place was hit, play hit clip */
-			hitSound.setFramePosition(0);
-			hitSound.start();
-		}
+		sound.stop();
+		sound.setFramePosition(0);
+		sound.start();
 	}
 	
     /**
