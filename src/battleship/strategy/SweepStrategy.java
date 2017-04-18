@@ -31,7 +31,6 @@ public class SweepStrategy extends Strategy{
 		Place randomPlace = possibleMoves.get(nextIndex);
 		randomPlace.hit();
 		removePlaceByIndex(firstElement);
-		System.out.println("stop");
 	}
 
 	

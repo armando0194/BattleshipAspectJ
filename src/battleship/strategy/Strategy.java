@@ -9,18 +9,33 @@ import battleship.model.Place;
  */
 public abstract class Strategy
 {
+	/** */
 	public final int firstElement = 0;
+	
+	/** Hashmap that will stores all the possible moves */
 	public HashMap<Integer, Place> possibleMoves; 
+	
+	/** List containing the possible moves from the hashmap*/
 	public List<Integer> possibleMoveKeys;
 	
+	/** Generates a computer move depending on the strategy */
 	abstract protected void move();
+	
+	/** generates all the possible moves */
 	abstract protected void generatePossibleMoveKeys();
 	
-	public Strategy(){}
+	/**
+	 * Constructor that stores all the possible moves in a hashmap
+	 * @param places - board places
+	 */
 	public Strategy(Iterable<Place> places) {
 		generatePossibleMoves(places);
 	}
 	
+	/**
+	 * Generates all the possibles moves and stores it in a Hashmap
+	 * @param places - board places
+	 */
 	public void generatePossibleMoves(Iterable<Place> places){
 		possibleMoves = new HashMap<Integer, Place>();
 		int index = 1;
@@ -32,7 +47,7 @@ public abstract class Strategy
 	}
 	
 	/**
-	 * Removes a possible move from the HashMap 
+	 * Removes a possible move from tthe list 
 	 * @param key - key of the element that will be removed
 	 */
 	public void removePlaceByIndex(int key){
@@ -40,7 +55,7 @@ public abstract class Strategy
 	}
 	
 	/**
-	 * Removes a possible move from the HashMap 
+	 * Removes a possible move from the lists 
 	 * @param key - key of the element that will be removed
 	 */
 	public void removePlaceByValue(Integer value){

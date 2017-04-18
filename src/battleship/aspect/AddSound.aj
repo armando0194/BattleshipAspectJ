@@ -1,14 +1,15 @@
 package battleship.aspect;
-import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import battleship.model.Place;
-import battleship.model.Board;
-import battleship.model.Ship;
+import battleship.BoardPanel;
 
  /**
  * @author Manuel Hernandez
@@ -16,7 +17,7 @@ import battleship.model.Ship;
  */
 public aspect AddSound {
 	/** Directory where audio files are stored. */
-    private static final String SOUND_DIR = "src\\sounds\\";
+    private static final String SOUND_DIR = "/sounds/";
 	
     /** Clip that will be played whenever a place is hit */
     private final Clip hitSound = null;
@@ -24,38 +25,34 @@ public aspect AddSound {
     /** Clip that will be played whenever a ship is hit */
 	private final Clip sunkSound = null;
 	
-	/**
-     * Pointcut that is executed, when the notifyHit method in Board is executed.
-     */
-	pointcut playHitSound() : 
-		execution(void Board.notifyHit(Place, int));
+	/** Pointcut that is executed, when the hit method in Place is called. */
+	pointcut playSound(Place place): 
+		call(void Place.hit()) &&
+		target(place) &&
+		this(BoardPanel);
 	
 	/**
-     * Pointcut that is executed, when the notifyShipSunk method in Board is executed.
-     */
-	pointcut playSunkSound() : 
-		execution(void Board.notifyShipSunk(Ship));
-	
-	/**
-	 * Plays hit sound
+	 * Plays a sound when the user makes a move
+	 * @param place - placed cliked by the user
 	 */
-	after() : playHitSound(){
-		playSound(hitSound, "Hit.wav");	
-	}
-	
-	/**
-	 * Plays sunk sound
-	 */
-	after() : playSunkSound(){
-		playSound(sunkSound, "Sunk.wav");	
+	after(Place place) : playSound(place){	
+		if(place.hasShip() && place.ship().isSunk()){
+		// if a ship was sunk, play the sunk sound
+			playSound(sunkSound, "Sunk.wav");
+		}
+		else{
+		//otherwise, place the hit sound
+			playSound(hitSound, "Hit.wav");	
+		}
 	}
 	
 	/**
 	 * Loads a clip if it is null and plays it
 	 * @param sound - sound clip
 	 * @param filename - name of the wav file
+	 * @throws URISyntaxException 
 	 */
-	private void playSound(Clip sound, String filename){
+	private void playSound(Clip sound, String filename) {
 		if(sound == null){
 			sound = loadAudio(filename);
 		}
@@ -68,10 +65,12 @@ public aspect AddSound {
      * Loads a clip from the system
      * @param filename - audio filename
      * @return - An open clip ready to play
+     * @throws URISyntaxException 
      */
-    public Clip loadAudio(String filename) {
+    public Clip loadAudio(String filename){
       try {
-    	  AudioInputStream audioIn = AudioSystem.getAudioInputStream(new File(SOUND_DIR + filename));
+    	  URL path = this.getClass().getResource(SOUND_DIR + filename);
+    	  AudioInputStream audioIn = AudioSystem.getAudioInputStream(path);
           Clip clip = AudioSystem.getClip();
           clip.open(audioIn);
           return clip;

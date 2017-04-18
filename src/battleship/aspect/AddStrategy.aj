@@ -34,10 +34,10 @@ import static battleship.Constants.DEFAULT_MISS_COLOR;
 privileged aspect AddStrategy {
 
 	/** Dialog dimensions when the practice mode is enabled */
-	private final static Dimension PRACTICE_DIMENSION = new Dimension(355, 470);
+	private final static Dimension PRACTICE_DIMENSION = new Dimension(335, 420);
 
 	/**  Dialog dimensions when the practice mode is disabled */
-	private final static Dimension PLAY_DIMENSION = new Dimension(350, 560);
+	private final static Dimension PLAY_DIMENSION = new Dimension(335, 520);
 
 	/** New play button that starts a new game with a computer  */
 	private JButton BattleshipDialog.newPlayButton;

@@ -3,7 +3,7 @@ package battleship.aspect;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
+import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
@@ -24,7 +24,7 @@ import battleship.model.Place;
 public privileged aspect AddCheatKey {
 	
 	/** Path of the image that shows the locations of ships hiding in the battleship board   */
-	private static final String IMAGE_DIR = "src\\sprite\\block.png";
+	private static final String IMAGE_DIR = "/sprite/block.png";
 	
 	/** Image that shows the locations of ships hiding in the battleship board */
 	private static BufferedImage image = null;
@@ -86,7 +86,8 @@ public privileged aspect AddCheatKey {
 		/** Load image if it is null */
 		if(image == null){
 			try{
-				image = ImageIO.read(new File(IMAGE_DIR));
+				URL path = this.getClass().getResource(IMAGE_DIR);
+				image = ImageIO.read(path);
 			} catch(Exception ex){
 				ex.printStackTrace();
 				return; 
