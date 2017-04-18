@@ -33,7 +33,7 @@ public aspect AddSound {
 	
 	/**
 	 * Plays a sound when the user makes a move
-	 * @param place - placed cliked by the user
+	 * @param place - placed clicked by the user
 	 */
 	after(Place place) : playSound(place){	
 		if(place.hasShip() && place.ship().isSunk()){

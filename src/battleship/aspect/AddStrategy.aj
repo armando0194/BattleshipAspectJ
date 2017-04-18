@@ -1,16 +1,19 @@
 package battleship.aspect;
 import java.awt.BorderLayout;
+
 import java.awt.Dimension;
+
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.JButton;
+
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 
+import javax.swing.border.EmptyBorder;
 import battleship.BattleshipDialog;
 import battleship.BoardPanel;
 import battleship.ShipPanel;
@@ -59,6 +62,9 @@ privileged aspect AddStrategy {
 	
 	/** Choice selected by the user when he wants to start a new game */
 	private boolean newGameDialogChoice = false;
+	
+	/** Flag that checks if the baord belongs to the user*/
+	public boolean BoardPanel.isUser = false;
 
 	/**
 	 * Pointcut that executes when a new BattleshipDialog is initialized
@@ -133,7 +139,6 @@ privileged aspect AddStrategy {
 		}
 	}
 
-
 	/**
 	 * Resets the computer board, and creates the strategy depending on the user choice
 	 * @param dialog - battleship dialog
@@ -168,7 +173,7 @@ privileged aspect AddStrategy {
 			dialog.setSize(PRACTICE_DIMENSION);
 		}
 	}
-
+	
 	/**
 	 * Resets the computer board and places the ship in the board
 	 * @param dialog - battleship dialog
@@ -240,11 +245,11 @@ privileged aspect AddStrategy {
 	private JPanel makeStatusPanel(BattleshipDialog dialog){
 		JPanel statusPanel = new JPanel( new GridLayout(1, 2) );
 		BoardPanel userBoardPanel;
-
 		statusPanel.setBorder(new EmptyBorder(10,30,10,10));
 		statusPanel.setMaximumSize(new Dimension(335, 300));
 		statusPanel.add(makeShipsPanel(dialog));
 		userBoardPanel = new BoardPanel(userBoard, 0, 0, 8, DEFAULT_BOARD_COLOR, DEFAULT_HIT_COLOR, DEFAULT_MISS_COLOR);
+		userBoardPanel.isUser = true;
 		removeMouseListener(userBoardPanel);
 
 		userBoardPanel.getMouseListeners();

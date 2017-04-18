@@ -1,5 +1,6 @@
 package battleship.aspect;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
@@ -73,16 +74,18 @@ public privileged aspect AddCheatKey {
 	after(BoardPanel board, Graphics g) : drawHiddenShips(board, g){
 		if(board.getIsCheatMode()){
 			board.drawShips(g);
-		}	
-	}
-	
+		}
+		if(board.isUser){
+			board.drawShips(g);
+		}
+	}	
 	
 	/**
 	 * Loads an image to display hidden ships, and draws it in the board.
 	 * It is injected in the BoardPanel
 	 * @param g - JPanel graphic in which the ships will be drawn. 
 	 */
-	private void BoardPanel.drawShips(Graphics g){
+	public void BoardPanel.drawShips(Graphics g){
 		/** Load image if it is null */
 		if(image == null){
 			try{
@@ -99,7 +102,15 @@ public privileged aspect AddCheatKey {
 			if ( !p.isHit() && p.hasShip() ) {
 			    int xPos = leftMargin + (p.getX() - 1) * placeSize;
 			    int yPos = topMargin + (p.getY() - 1) * placeSize;
-			    g.drawImage(image, xPos+1, yPos+1, this);
+			    
+			    if(isUser){
+			    // if the board belongs to the user, paint ships gree
+			    	g.setColor(Color.GREEN);
+			    	g.fillRect(xPos+1, yPos+1, placeSize - 1, placeSize - 1);
+			    }else{
+			    // Otherwise draw an image
+			    	g.drawImage(image, xPos+1, yPos+1, this);
+			    }
 			}
 		}
 	}
